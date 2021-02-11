@@ -10,7 +10,7 @@ import os
 # Ground Sensor Measurements under this threshold are black
 # measurements above this threshold can be considered white.
 # TODO: Fill this in with a reasonable threshold that separates "line detected" from "no line detected"
-GROUND_SENSOR_THRESHOLD = 0
+GROUND_SENSOR_THRESHOLD = 315
 
 # These are your pose values that you will update by solving the odometry equations
 pose_x = 0
@@ -59,8 +59,9 @@ while robot.step(SIM_TIMESTEP) != -1:
     # Read ground sensor values
     for i, gs in enumerate(ground_sensors):
         gsr[i] = gs.getValue()
-    # vL = MAX_SPEED
-    # vR = MAX_SPEED
+
+    #vL = MAX_SPEED
+    #vR = MAX_SPEED
 
     #print(gsr) # TODO: Uncomment to see the ground sensor values!
 
@@ -81,11 +82,26 @@ while robot.step(SIM_TIMESTEP) != -1:
 
     # TODO: Insert Line Following Code Here
 
+    # Center ground sensor
+    if(gsr[1] < GROUND_SENSOR_THRESHOLD):
+        vL = MAX_SPEED*0.2
+        vR = MAX_SPEED*0.2
 
+    # Left ground sensor
+elif(gsr[0] < GROUND_SENSOR_THRESHOLD):
+        vL = -MAX_SPEED*0.2
+        vR = MAX_SPEED*0.2
+    # Right ground sensor
+elif(gsr[2] < GROUND_SENSOR_THRESHOLD):
+        vL = MAX_SPEED*0.2
+        vR = -MAX_SPEED*0.2
+    else:
+        vL = -MAX_SPEED*0.2
+        vR = MAX_SPEED*0.2
 
-
-
-
+    # pose_x =
+    # pose_y =
+    # pose_theta =
 
     # TODO: Call update_odometry Here
 
@@ -106,7 +122,7 @@ while robot.step(SIM_TIMESTEP) != -1:
 
 
 
-    
+
     # TODO: Insert Loop Closure Code Here
 
     # Hints:
