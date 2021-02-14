@@ -1,4 +1,3 @@
-
 """csci3302_lab2 controller."""
 
 # You may need to import some classes of the controller module. Ex:
@@ -10,7 +9,7 @@ import os
 # Ground Sensor Measurements under this threshold are black
 # measurements above this threshold can be considered white.
 # TODO: Fill this in with a reasonable threshold that separates "line detected" from "no line detected"
-GROUND_SENSOR_THRESHOLD = 315
+GROUND_SENSOR_THRESHOLD = 550
 
 # These are your pose values that you will update by solving the odometry equations
 pose_x = 0
@@ -63,7 +62,7 @@ while robot.step(SIM_TIMESTEP) != -1:
     #vL = MAX_SPEED
     #vR = MAX_SPEED
 
-    #print(gsr) # TODO: Uncomment to see the ground sensor values!
+    print(gsr) # TODO: Uncomment to see the ground sensor values!
 
     # Hints:
     #
@@ -83,25 +82,22 @@ while robot.step(SIM_TIMESTEP) != -1:
     # TODO: Insert Line Following Code Here
 
     # Center ground sensor
-    if(gsr[1] < GROUND_SENSOR_THRESHOLD):
-        vL = MAX_SPEED*0.2
-        vR = MAX_SPEED*0.2
+    if(gsr[1] < GROUND_SENSOR_THRESHOLD and gsr[0] > GROUND_SENSOR_THRESHOLD and gsr[2] > GROUND_SENSOR_THRESHOLD):
+        vL = MAX_SPEED*0.5
+        vR = MAX_SPEED*0.5
 
     # Left ground sensor
-elif(gsr[0] < GROUND_SENSOR_THRESHOLD):
-        vL = -MAX_SPEED*0.2
-        vR = MAX_SPEED*0.2
+    elif(gsr[0] < GROUND_SENSOR_THRESHOLD and gsr[2] > GROUND_SENSOR_THRESHOLD and gsr[1] > GROUND_SENSOR_THRESHOLD):
+        vL = MAX_SPEED*0.1
+        vR = MAX_SPEED*0.5
     # Right ground sensor
-elif(gsr[2] < GROUND_SENSOR_THRESHOLD):
-        vL = MAX_SPEED*0.2
-        vR = -MAX_SPEED*0.2
+    elif(gsr[2] < GROUND_SENSOR_THRESHOLD and gsr[0] > GROUND_SENSOR_THRESHOLD and gsr[1] > GROUND_SENSOR_THRESHOLD):
+        vL = MAX_SPEED*0.5
+        vR = MAX_SPEED*0.1
     else:
-        vL = -MAX_SPEED*0.2
-        vR = MAX_SPEED*0.2
+        vL = -MAX_SPEED*0.5
+        vR = MAX_SPEED*0.5
 
-    # pose_x =
-    # pose_y =
-    # pose_theta =
 
     # TODO: Call update_odometry Here
 
@@ -120,7 +116,10 @@ elif(gsr[2] < GROUND_SENSOR_THRESHOLD):
     # about calculating odometry in the world coordinate system of the
     # Webots simulator first (x points down, y points right)
 
-
+    time = SIM_TIMESTEP/1000.0
+    pose_x += (math.cos(pose_theta)*(vL+vR)/2)*time
+    pose_y += (math.sin(pose_theta)*(vL+vR)/2)*time
+    pose_theta += ((vR-vL)/0.053)*time
 
 
     # TODO: Insert Loop Closure Code Here
