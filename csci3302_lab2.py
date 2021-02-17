@@ -63,7 +63,7 @@ while robot.step(SIM_TIMESTEP) != -1:
     #vL = MAX_SPEED
     #vR = MAX_SPEED
 
-    print(gsr) # TODO: Uncomment to see the ground sensor values!
+    #print(gsr) # TODO: Uncomment to see the ground sensor values!
 
     # Hints:
     #
@@ -83,7 +83,7 @@ while robot.step(SIM_TIMESTEP) != -1:
     # TODO: Insert Line Following Code Here
 
     # Center ground sensor
-    if((gsr[1] < GROUND_SENSOR_THRESHOLD and gsr[0] > GROUND_SENSOR_THRESHOLD and gsr[2] > GROUND_SENSOR_THRESHOLD) or time_three_sensors > 0.1):
+    if(gsr[1] < GROUND_SENSOR_THRESHOLD and gsr[0] > GROUND_SENSOR_THRESHOLD and gsr[2] > GROUND_SENSOR_THRESHOLD):
          vL = MAX_SPEED*0.5
          vR = MAX_SPEED*0.5
 
@@ -96,8 +96,9 @@ while robot.step(SIM_TIMESTEP) != -1:
          vL = MAX_SPEED*0.5
          vR = MAX_SPEED*0.1
     else:
-        vL = -MAX_SPEED*0.5
-        vR = MAX_SPEED*0.5
+        if(gsr[0] > GROUND_SENSOR_THRESHOLD and gsr[1] > GROUND_SENSOR_THRESHOLD and gsr[2] > GROUND_SENSOR_THRESHOLD):
+            vL = -MAX_SPEED*0.5
+            vR = MAX_SPEED*0.5
 
 
     # TODO: Call update_odometry Here
@@ -118,12 +119,12 @@ while robot.step(SIM_TIMESTEP) != -1:
     # Webots simulator first (x points down, y points right)
 
     time = SIM_TIMESTEP/1000.0
-    pose_x += (math.cos(pose_theta)*(vL+vR)/2)*time
-    pose_y += (math.sin(pose_theta)*(vL+vR)/2)*time
-    pose_theta += ((vR-vL)/0.053)*time
+    left = (vL/MAX_SPEED)*EPUCK_MAX_WHEEL_SPEED
+    right = (vR/MAX_SPEED)*EPUCK_MAX_WHEEL_SPEED
+    pose_x += (math.cos(pose_theta)*((left+right)/2))*time
+    pose_y += (math.sin(pose_theta)*((left+right)/2))*time
+    pose_theta += ((right-left)/0.053)*time
 
-    if(pose_theta >= 360):
-        pose_theta -= 360
 
 
     # TODO: Insert Loop Closure Code Here
@@ -136,7 +137,7 @@ while robot.step(SIM_TIMESTEP) != -1:
     # for best results
 
     if(gsr[0] < GROUND_SENSOR_THRESHOLD and gsr[1] < GROUND_SENSOR_THRESHOLD and gsr[2] < GROUND_SENSOR_THRESHOLD):
-        time_three_sensors += SIM_TIMESTEP
+        time_three_sensors += time
     else:
         time_three_sensors = 0
 
